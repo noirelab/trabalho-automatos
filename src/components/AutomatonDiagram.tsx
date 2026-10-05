@@ -32,8 +32,10 @@ const edges: { from: VisibleState; to: VisibleState; label: string; path: string
 export default function AutomatonDiagram({ currentState, activeStep, stepId }: Props) {
   const [completedStepId, setCompletedStepId] = useState(-1);
   const arrived = activeStep !== null && completedStepId === stepId;
+  // Sem transição desenhada, a leitura morre no estado de origem, que fica em vermelho.
+  const dead = activeStep?.to === "D";
   // Enquanto a seta é desenhada, o destaque permanece no estado de origem.
-  const visualState = activeStep && activeStep.to !== "D" && !arrived ? activeStep.from : currentState;
+  const visualState = activeStep && (dead || !arrived) ? activeStep.from : currentState;
 
   // Sem animação, não haverá animationend; marcamos a chegada imediatamente.
   useEffect(() => {
@@ -75,7 +77,7 @@ export default function AutomatonDiagram({ currentState, activeStep, stepId }: P
           const active = visualState === state;
           const final = state === "B" || state === "C";
           return (
-            <g key={state} className={`state ${active ? "state-current" : ""}`}>
+            <g key={state} className={`state ${active ? (dead ? "state-dead" : "state-current") : ""}`}>
               <circle cx={x} cy={y} r="49" className="state-halo" />
               {active && arrived && activeStep && <circle key={stepId} cx={x} cy={y} r="49" className="state-pulse-ring" />}
               <circle cx={x} cy={y} r="41" className="state-circle" />

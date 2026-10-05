@@ -46,12 +46,14 @@ export function getNextState(state: State, symbol: string): State {
 export function describeTransition(step: SimulationStep | null): string {
   if (!step) return "Pronto para começar no estado A.";
   const symbol = step.symbol === " " ? "espaço" : step.symbol;
+  if (step.to === "D") return `Leu ${symbol} no estado ${step.from}: não há transição. A leitura para aqui e a sentença é rejeitada.`;
   return `Leu ${symbol} e foi do estado ${step.from} para o estado ${step.to}.`;
 }
 
 /**
  * Começa em A, consome um caractere por vez e guarda cada transição.
- * A aceitação só é decidida ao final, se o estado for B ou C.
+ * Para no primeiro símbolo sem transição (estado morto D), rejeitando na hora.
+ * Se ler tudo, aceita quando o estado final for B ou C.
  */
 export function simulateSentence(sentence: string): SimulationResult {
   let currentState: State = initialState;
@@ -61,6 +63,8 @@ export function simulateSentence(sentence: string): SimulationResult {
     const nextState = getNextState(currentState, symbol);
     steps.push({ index, from: currentState, symbol, to: nextState });
     currentState = nextState;
+    // D não tem saída: os símbolos restantes não mudariam o resultado.
+    if (currentState === "D") break;
   }
 
   return {

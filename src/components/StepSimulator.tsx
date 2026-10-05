@@ -41,6 +41,9 @@ export default function StepSimulator({ request, onStepChange }: Props) {
   // A letra destacada gerou o último passo; no passo zero, mostra a próxima letra.
   const highlightedIndex = currentStep === 0 ? 0 : currentStep - 1;
   const invalidStep = result?.steps.find((step) => !isAlphabetSymbol(step.symbol));
+  // A leitura parou antes do fim da sentença porque não havia transição.
+  const died = lastStep?.to === "D";
+  const sentenceLength = result ? Array.from(result.sentence).length : 0;
   const focusedSymbol = lastStep?.symbol ?? result?.sentence[0];
   const focusedSymbolLabel = focusedSymbol === " " ? "espaço" : focusedSymbol ?? "Nenhum";
 
@@ -129,7 +132,7 @@ export default function StepSimulator({ request, onStepChange }: Props) {
         <span className="strip-label">SENTENÇA EM LEITURA</span>
         <div className="character-list">
           {result === null ? <span className="empty-hint">Inicie uma execução para acompanhar os símbolos.</span> : result.sentence.length === 0 ? <span className="empty-hint">ε (sentença vazia)</span> : Array.from(result.sentence).map((character, index) => (
-            <span key={index} className={`character ${index < highlightedIndex ? "character-read" : ""} ${index === highlightedIndex ? "character-current" : ""}`} title={`Símbolo ${index + 1}: ${character}`}>
+            <span key={index} className={`character ${index < highlightedIndex ? "character-read" : ""} ${index === highlightedIndex ? (died ? "character-dead" : "character-current") : ""} ${died && index > highlightedIndex ? "character-skipped" : ""}`} title={`Símbolo ${index + 1}: ${character}`}>
               {character === " " ? "espaço" : character}
             </span>
           ))}
@@ -137,9 +140,9 @@ export default function StepSimulator({ request, onStepChange }: Props) {
       </div>
 
       <div className="metrics-grid">
-        <div className="metric"><span>Estado atual</span><strong className={state === "D" ? "text-muted" : ""}>{state}</strong></div>
+        <div className="metric"><span>Estado atual</span><strong className={died ? "text-dead" : ""}>{died ? "sem transição" : state}</strong></div>
         <div className="metric"><span>Símbolo da etapa</span><strong>{focusedSymbolLabel}</strong></div>
-        <div className="metric"><span>Consumidos</span><strong>{currentStep} / {result?.steps.length ?? 0}</strong></div>
+        <div className="metric"><span>Consumidos</span><strong>{currentStep} / {sentenceLength}</strong></div>
         <div className="metric metric-wide"><span>O que aconteceu</span><strong>{describeTransition(lastStep)}</strong></div>
       </div>
 
@@ -159,9 +162,9 @@ export default function StepSimulator({ request, onStepChange }: Props) {
           <ol className="history-list">
             <li><span className="history-index">0</span><span><strong>Estado inicial</strong><small>A</small></span></li>
             {result.steps.slice(0, currentStep).map((step) => (
-              <li key={step.index}><span className="history-index">{step.index + 1}</span><span><strong>Leu {step.symbol === " " ? "espaço" : step.symbol}</strong><small>Do estado {step.from} para {step.to}</small></span></li>
+              <li key={step.index}><span className="history-index">{step.index + 1}</span><span><strong>Leu {step.symbol === " " ? "espaço" : step.symbol}</strong><small>{step.to === "D" ? `Sem transição a partir de ${step.from}` : `Do estado ${step.from} para ${step.to}`}</small></span></li>
             ))}
-            {finished && <li className={result.accepted ? "history-success" : "history-failure"}><span className="history-index">{result.accepted ? "✓" : "✕"}</span><span><strong>Resultado: {result.accepted ? "ACEITA" : "REJEITA"}</strong><small>Fim da sentença no estado {result.finalState}</small></span></li>}
+            {finished && <li className={result.accepted ? "history-success" : "history-failure"}><span className="history-index">{result.accepted ? "✓" : "✕"}</span><span><strong>Resultado: {result.accepted ? "ACEITA" : "REJEITA"}</strong><small>{result.finalState === "D" ? `Sem transição no símbolo ${result.steps.length} de ${sentenceLength}` : `Fim da sentença no estado ${result.finalState}`}</small></span></li>}
           </ol>
         )}
       </details>

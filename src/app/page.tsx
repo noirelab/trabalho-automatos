@@ -31,13 +31,6 @@ export default function Home() {
     simulatorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // D não aparece no SVG; esta mensagem informa quando a leitura entra ou fica nele.
-  const deadSymbol = activeStep?.symbol === " " ? "espaço" : activeStep?.symbol ?? "inválido";
-  const diagramMessage = currentState === "D"
-    ? activeStep?.from === "D"
-      ? "A leitura permanece no estado morto D."
-      : `A leitura entrou no estado morto D após o símbolo ${deadSymbol}.`
-    : describeTransition(activeStep);
 
   return (
     <main className="page-shell">
@@ -52,7 +45,7 @@ export default function Home() {
           <div className="section-heading"><div><span className="eyebrow">01 / VISUALIZAÇÃO</span><h2 id="afd-title">AFD equivalente</h2><p>Percurso principal: A, B e C. As demais transições aparecem na tabela abaixo.</p></div></div>
           <AutomatonDiagram currentState={currentState} activeStep={activeStep} stepId={diagramStep.id} />
           <div className="diagram-legend"><span><i className="legend-dot legend-current" /> Estado atual</span><span><i className="legend-dot legend-final" /> Estado final</span></div>
-          <div className={`diagram-status ${currentState === "D" ? "diagram-status-dead" : ""}`} aria-live="polite"><span>PASSO NO DIAGRAMA</span><strong>{diagramMessage}</strong></div>
+          <div className={`diagram-status ${currentState === "D" ? "diagram-status-dead" : ""}`} aria-live="polite"><span>PASSO NO DIAGRAMA</span><strong>{describeTransition(activeStep)}</strong></div>
         </section>
         <StepSimulator request={request} onStepChange={handleStepChange} />
       </div>
