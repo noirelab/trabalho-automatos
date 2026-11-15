@@ -1,0 +1,2 @@
+Aceitar: ε, abb, aab, aabbbb, aaaabb, aaaaaabbb
+Rejeitar: ab, abbb, aabbb, aaabb, aaab
