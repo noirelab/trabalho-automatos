@@ -4,6 +4,8 @@ import type { Derivation, TreeNode } from "@/lib/grammar";
 const GAP_X = 52;
 const GAP_Y = 58;
 const PAD = 30;
+// Árvores pequenas ficam ampliadas para usar o palco; o CSS limita à largura e altura disponíveis.
+const ZOOM = 1.5;
 
 type Props = { tree: TreeNode; derivation: Derivation; step: number };
 
@@ -45,7 +47,7 @@ export default function DerivationTree({ tree, derivation, step }: Props) {
 
   return (
     <div className="tree-frame">
-      <svg className="tree-svg" viewBox={`0 0 ${width} ${height}`} width={width} height={height} role="img" aria-label={`Árvore de derivação no passo ${step}`}>
+      <svg className="tree-svg" viewBox={`0 0 ${width} ${height}`} style={{ width: width * ZOOM, maxWidth: "100%" }} role="img" aria-label={`Árvore de derivação no passo ${step}`}>
         {nodes.filter((node) => node !== tree).map((node) => {
           const parent = parents.get(node.id)!;
           const from = positions.get(parent.id)!;

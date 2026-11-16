@@ -59,7 +59,7 @@ export default function FileTester({ onSelectSentence }: Props) {
 
   return (
     <section className="card" aria-labelledby="file-title">
-      <h2 id="file-title"><span className="section-number">5</span> Arquivo de entrada</h2>
+      <h2 id="file-title">Arquivo de entrada</h2>
       <p>O arquivo segue o formato da lista: uma linha “Aceitar:” e outra “Rejeitar:”, com as sentenças separadas por vírgula. O programa testa cada uma na gramática da FNC e compara com o esperado.</p>
       <div className="file-actions">
         <label className="button button-primary upload-button" htmlFor="file-input">Selecionar arquivo .txt</label>

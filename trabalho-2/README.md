@@ -109,9 +109,9 @@ A página segue a ordem dos critérios do vídeo:
 | --- | --- |
 | `src/lib/grammar.ts` | Gramática original, passos da simplificação e da FNC, CYK com montagem da árvore, derivação mais à esquerda, explicação da rejeição e leitura do arquivo. |
 | `src/lib/grammar.test.ts` | Confere que a gramática original, cada passo e a FNC geram L₃, que a FNC está no formato certo e que o simulador aceita exatamente L₃ (todas as cadeias até 10 símbolos). |
-| `src/components/GrammarInfo.tsx` | Seções 1 a 3: construção, simplificação e FNC. |
+| `src/components/GrammarInfo.tsx` | Resultados da construção, simplificação e FNC, recolhidos no fim da página. |
 | `src/components/Sym.tsx` | Escreve símbolos com índice (S₀, E₀, N_X) e listas de produções. |
-| `src/components/DerivationSimulator.tsx` | Seção 4: entrada, controles e tabela de passos da derivação. |
+| `src/components/DerivationSimulator.tsx` | Foco do programa: gramática na FNC, entrada, controles e tabela de passos da derivação. |
 | `src/components/DerivationTree.tsx` | Desenha em SVG a árvore até o passo atual, no estilo dos slides. |
 | `src/components/FileTester.tsx` | Lê o `.txt` com `FileReader` e testa cada sentença. |
 | `src/app/page.tsx` | Monta a página e leva a sentença escolhida na tabela até o simulador. |

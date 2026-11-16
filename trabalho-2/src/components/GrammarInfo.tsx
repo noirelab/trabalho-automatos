@@ -20,12 +20,25 @@ function Production({ rule }: { rule: Rule }) {
   return <><Sym label={rule.left} /> → <Right symbols={rule.right} /></>;
 }
 
-/** Seções 1 a 3 do trabalho: construção, simplificação e FNC, no formato das soluções do professor. */
+/** Gramática na FNC com o número de cada produção; `active` destaca a produção usada no passo atual. */
+export function CnfRules({ active }: { active?: number }) {
+  return (
+    <ul className="rule-list">{[...new Set(cnfGrammar.map((r) => r.left))].map((left) => (
+      <li key={left}><span className="rule-left"><Sym label={left} /></span> → {cnfGrammar.filter((r) => r.left === left).map((r, index) => {
+        const number = ruleNumber(r.left, r.right);
+        return <span key={index}>{index > 0 && " | "}<span className={number === active ? "rule-active" : "rule-option"}><Right symbols={r.right} /> <span className="rule-number">({number})</span></span></span>;
+      })}</li>
+    ))}</ul>
+  );
+}
+
+/** Resultados da resolução (construção, simplificação, FNC), recolhidos: o foco da página é a simulação. */
 export default function GrammarInfo() {
   return (
-    <>
-      <section className="card" aria-labelledby="build-title">
-        <h2 id="build-title"><span className="section-number">1</span> Construção da GLC</h2>
+    <details className="card resolution">
+      <summary>Resolução da gramática: construção, simplificação e FNC</summary>
+      <section aria-labelledby="build-title">
+        <h2 id="build-title">Construção da GLC</h2>
         <p>L₃ é uma união, então fazemos uma gramática para cada parte e juntamos com S → X | Y. X põe dois b para cada a; Y põe dois a para cada b.</p>
         <div className="two-columns">
           <div>
@@ -39,15 +52,15 @@ export default function GrammarInfo() {
         </div>
       </section>
 
-      <section className="card" aria-labelledby="simplify-title">
-        <h2 id="simplify-title"><span className="section-number">2</span> Simplificação</h2>
+      <section aria-labelledby="simplify-title">
+        <h2 id="simplify-title">Simplificação</h2>
         <p>Ordem da receita do professor: vazias, unitárias, inúteis, inacessíveis. Nessa ordem, um passo não estraga o anterior.</p>
         <p className="legend"><span className="rule-added">verde</span> = produção nova no passo · <s>riscado</s> = produção que saiu</p>
         <div className="steps">{steps.map((step, index) => <StepBox key={step.title} step={step} previous={steps.slice(0, index).reverse().find((s) => s.rules.length)?.rules ?? originalGrammar} />)}</div>
       </section>
 
-      <section className="card" aria-labelledby="cnf-title">
-        <h2 id="cnf-title"><span className="section-number">3</span> Forma Normal de Chomsky</h2>
+      <section aria-labelledby="cnf-title">
+        <h2 id="cnf-title">Forma Normal de Chomsky</h2>
         <p>Na FNC cada produção troca uma variável por exatamente duas variáveis (como C → XD) ou por um terminal (como A → a). Só a raiz pode ter S<sub>0</sub> → ε. Os nomes seguem o Ex. 18 da lista do professor.</p>
         <h3>Cada produção, do passo 4 até a FNC</h3>
         <div className="table-scroll">
@@ -78,9 +91,7 @@ export default function GrammarInfo() {
           <div>
             <h3>Gramática na FNC</h3>
             <p className="hint">Número de cada produção entre parênteses; o simulador usa esses números.</p>
-            <ul className="rule-list">{[...new Set(cnfGrammar.map((r) => r.left))].map((left) => (
-              <li key={left}><span className="rule-left"><Sym label={left} /></span> → {cnfGrammar.filter((r) => r.left === left).map((r, index) => <span key={index}>{index > 0 && "  |  "}<Right symbols={r.right} /> <span className="rule-number">({ruleNumber(r.left, r.right)})</span></span>)}</li>
-            ))}</ul>
+            <CnfRules />
           </div>
           <div>
             <h3>Conferência: derivando aabbbb</h3>
@@ -90,6 +101,6 @@ export default function GrammarInfo() {
           </div>
         </div>
       </section>
-    </>
+    </details>
   );
 }
